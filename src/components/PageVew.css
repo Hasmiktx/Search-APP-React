@@ -1,0 +1,23 @@
+#header{
+   margin-top: 80px; 
+}
+
+#head{
+    display: flex;
+    flex-flow: nowrap column;
+    color: whitesmoke;
+    text-align: center;
+
+}
+#headZone{
+    height: 400px;
+    /* background-image:url("./images/imgHead.jpg") ;  */
+    background-position: center 35%;
+    background-size:cover;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+
+    
+    
