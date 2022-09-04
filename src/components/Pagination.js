@@ -1,4 +1,8 @@
 import React from "react";
+import DrawSportlist from "./DrawSportList";
+import ImageDraw from "./ImagesDraw";
+import Description from "./Description";
+import DefaultImg from "../components/img/sports.jpg";
 import "./Pagination.css";
 
 export default class Pagination extends React.Component {
@@ -7,10 +11,10 @@ export default class Pagination extends React.Component {
     this.state = {
       objectData: null,
       list: null,
+      describtion: null,
     };
   }
   componentDidMount() {
-    console.log("started fetch");
     fetch("https://sports.api.decathlon.com/sports")
       .then((resp) => resp.json())
       .then((object) => this.setState({ objectData: object }));
@@ -21,12 +25,18 @@ export default class Pagination extends React.Component {
     const end = num * 20;
 
     const arrShow = this.state?.objectData?.data.slice(start, end);
-    const sportList = arrShow.map((obj) => obj.attributes.name);
-    console.log(sportList);
+
+    const sportList = arrShow.map((obj) => ({
+      id: obj.id,
+      name: obj.attributes.name,
+      img: obj.relationships.images.data.length
+        ? obj.relationships.images.data[0].url
+        : DefaultImg,
+    }));
+
     this.setState({ list: sportList });
-    console.log(this.state.list);
   };
-  draw(arr) {
+  draw = (arr) => {
     const pageArr = [];
     let page = Math.floor(arr.length / 20);
     if (page >= 4) {
@@ -38,35 +48,44 @@ export default class Pagination extends React.Component {
     }
     return (
       <>
-        {pageArr.map((el) => {
+        {pageArr.map((num) => {
           return (
             <div
-              onClick={() => this.pageOnclick(el)}
-              key={el}
+              onClick={() => this.pageOnclick(num)}
+              key={num}
               style={{ margin: 30 }}
+              id="numPage"
             >
-              {el}
+              {num}
             </div>
           );
         })}
       </>
     );
-  }
-
+  };
+  infoFunc = (id) => {
+    fetch(`https://sports.api.decathlon.com/sports/${id}`)
+      .then((response) => response.json())
+      .then((obj) =>
+        this.setState({
+          describtion: obj.data?.attributes?.description ? (
+            obj.data?.attributes?.description
+          ) : (
+            <p>No more info yet...</p>
+          ),
+        })
+      );
+  };
   render() {
     return (
-      <div id="divPage">
-        <div>choose page</div>
-        <div id="numPage">
-          {this.state.objectData?.data
-            ? this.draw(this.state.objectData.data)
-            : null}
-        </div>
-        <div id="listDiv">
-          {this.state.list
-            ? this.state.list.map((name) => <li className="li">{name}</li>)
-            : null}
-        </div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <DrawSportlist state={this.state} draw={this.draw} />
+
+        {this.state.list?.length && (
+          <ImageDraw list={this.state.list} infoFunc={this.infoFunc} />
+        )}
+        <Description description={this.state.describtion} />
+        <DrawSportlist state={this.state} draw={this.draw} />
       </div>
     );
   }

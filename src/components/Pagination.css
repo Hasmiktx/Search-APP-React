@@ -1,22 +1,22 @@
-.li{
-    font-size: larger;
-    color: aliceblue;
-    list-style: none;
+
+
+#numPage:hover{
+    background-color: yellow;
 }
-.li:hover{
-    color: aqua;
-}
-#listDiv{
-    margin-bottom: 20px;
-    margin-left: 20px;
-    padding: 20px;
-}
+
+
 #divPage{
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
 }
 #numPage{
     display: flex;
     justify-content: space-evenly;
+    width: 30px;
+    height: 30px;
+    background-color: aqua;
+    border-radius: 50%;
+    color: black;
+    font-size: large;
 }
