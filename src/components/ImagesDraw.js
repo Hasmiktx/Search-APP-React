@@ -1,6 +1,6 @@
 import React from "react";
 import "./PageVew.css";
-// import imgSport from "..components/img/sports.jpg";
+
 export default function ImageDraw({ list, infoFunc }) {
   return (
     <div

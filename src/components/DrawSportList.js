@@ -5,9 +5,7 @@ export default function DrawSportlist(props) {
       <div id="divPage">
         <div>choose page...</div>
         <div style={{ display: "flex" }}>
-          {props.state.objectData?.data
-            ? props.draw(props.state.objectData.data)
-            : null}
+          {props.objectData?.data ? props.draw(props.objectData.data) : null}
         </div>
       </div>
     </>
