@@ -1,7 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setDescription } from "../StateManagment/DataSlice";
+import { Link } from "react-router-dom";
 import "./PageVew.css";
 
-export default function ImageDraw({ list, infoFunc }) {
+export default function ImageDraw() {
+  const list = useSelector((state) => state.data.list);
+  const [isHover, setHover] = useState(false);
+  const dispatch = useDispatch();
+
+  const infoFunc = (id) => {
+    fetch(`https://sports.api.decathlon.com/sports/${id}`)
+      .then((response) => response.json())
+      .then((obj) =>
+        dispatch(
+          setDescription(
+            obj.data?.attributes?.description ? (
+              obj.data?.attributes?.description
+            ) : (
+              <p>No more info yet...</p>
+            )
+          )
+        )
+      );
+  };
+
   return (
     <div
       style={{
@@ -36,9 +59,15 @@ export default function ImageDraw({ list, infoFunc }) {
             ></div>
             <button
               onClick={() => infoFunc(item.id)}
-              style={{ width: "100px", cursor: "pointer" }}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              style={{
+                width: "100px",
+                cursor: "pointer",
+                backgroundColor: isHover ? "yellow" : "white",
+              }}
             >
-              Click for info
+              <Link>Click for info</Link>
             </button>
           </div>
         </div>

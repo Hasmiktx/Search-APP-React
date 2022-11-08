@@ -1,16 +1,19 @@
 import React from "react";
-export default function Description({ description }) {
+import { useSelector, useDispatch } from "react-redux";
+export default function Description() {
+  const description = useSelector((state) => state.data.description);
   return (
     <div
       style={{
         display: "flex",
         width: "400px",
+        height: "400px",
         textAlign: "center",
         marginLeft: "auto",
         marginRight: "auto",
       }}
     >
-      {description}
+      <h4>{description}Hi</h4>
     </div>
   );
 }

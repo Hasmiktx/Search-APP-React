@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setObjectData,
+  setList,
+  setDescription,
+} from "../StateManagment/DataSlice";
 import DrawSportlist from "./DrawSportList";
 import ImageDraw from "./ImagesDraw";
 import Description from "./Description";
@@ -6,17 +12,24 @@ import DefaultImg from "../components/img/sports.jpg";
 import "./Pagination.css";
 
 export default function Pagination() {
-  const [objectData, setObjecData] = useState(null);
-  const [list, setList] = useState(null);
-  const [describtion, setDescription] = useState(null);
+  const [current, setCurrent] = useState(0);
+  const [isHover, setHover] = useState(false);
 
+  const objectData = useSelector((state) => state.data.objecData);
+
+  const list = useSelector((state) => state.data.list);
+  const description = useSelector((state) => state.data.description);
+
+  const dispatch = useDispatch();
   useEffect(() => {
     fetch("https://sports.api.decathlon.com/sports")
       .then((resp) => resp.json())
-      .then((object) => setObjecData(object));
+      .then((data) => dispatch(setObjectData(data)));
   }, []);
 
   const pageOnclick = (num) => {
+    setCurrent(num);
+    dispatch(setDescription(null));
     const start = (num - 1) * 20 + 1;
     const end = num * 20;
 
@@ -30,7 +43,7 @@ export default function Pagination() {
         : DefaultImg,
     }));
 
-    setList(sportList);
+    dispatch(setList(sportList));
   };
   const draw = (arr) => {
     const pageArr = [];
@@ -48,8 +61,13 @@ export default function Pagination() {
           return (
             <div
               onClick={() => pageOnclick(num)}
+              // onMouseEnter={() => setHover(true)}
+              // onMouseLeave={() => setHover(false)}
               key={num}
-              style={{ margin: 30 }}
+              style={{
+                margin: 30,
+                backgroundColor: current === num ? "yellow" : "aqua",
+              }}
               id="numPage"
             >
               {num}
@@ -59,27 +77,20 @@ export default function Pagination() {
       </>
     );
   };
-  const infoFunc = (id) => {
-    fetch(`https://sports.api.decathlon.com/sports/${id}`)
-      .then((response) => response.json())
-      .then((obj) =>
-        setDescription(
-          obj.data?.attributes?.description ? (
-            obj.data?.attributes?.description
-          ) : (
-            <p>No more info yet...</p>
-          )
-        )
-      );
-  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <DrawSportlist objectData={objectData} draw={draw} />
-
-      {list?.length && <ImageDraw list={list} infoFunc={infoFunc} />}
-      <Description description={describtion} />
-      <DrawSportlist objectData={objectData} draw={draw} />
+      {objectData && (
+        <div id="divPage">
+          <div>choose page...</div>
+          <div style={{ display: "flex" }}>
+            {objectData?.data ? draw(objectData.data) : "hello"}
+          </div>
+        </div>
+      )}
+      {list?.length && <ImageDraw />}
+      <Description />
+      {objectData && <DrawSportlist draw={draw} objecData={objectData} />}
     </div>
   );
 }
